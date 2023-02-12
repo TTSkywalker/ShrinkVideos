@@ -34,7 +34,7 @@ inputCandidates=`ls $inputPathPrefix`
 for inputCandidate in $inputCandidates
 do
     i=$[i+1]
-    if [[ $i -gt 10 ]];then
+    if [[ $i -gt 40 ]];then
     break
     fi
     inputPath=$inputPathPrefix/$inputCandidate
@@ -43,18 +43,18 @@ do
     if [[ -f $inputPath ]];then
         rawProbe=`getRawProbe $inputPath`
         if [[ $rawProbe == *$BIT_RATE_PREFIX* ]]&&[[ $rawProbe == *$SIZE_PREFIX* ]];then
-            inputSize=`getSize $rawProbe`
+            # inputSize=`getSize $rawProbe`
             inputBitRate=`getBitRate $rawProbe`
-            if [[ $inputSize -ge 600 ]];then
+            # if [[ $inputSize -ge 600 ]];then
                 inputFileName=${inputPath##*/}
                 inputFileName=${inputFileName%.*}
                 outputFileName=${inputFileName}'.mp4'
                 outputBitrate=$[$inputBitRate*45/100]
                 echo -n ': '$inputBitRate' to '$outputBitrate >> $LOG_PATH
                 ffmpeg -hide_banner -y -hwaccel cuda -hwaccel_output_format cuda -i $inputPath -tag:v hvc1 -c:v hevc_nvenc -b:v ${outputBitrate}K $outputPathPrefix/$outputFileName
-            else
-                videoStatus='inputSize '$inputSize'm, too small'
-            fi
+            # else
+            #     videoStatus='inputSize '$inputSize'm, too small'
+            # fi
         else
             videoStatus='weird probe'
         fi
